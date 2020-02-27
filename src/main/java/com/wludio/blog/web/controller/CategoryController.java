@@ -1,7 +1,7 @@
 package com.wludio.blog.web.controller;
 
-import com.wludio.blog.facade.FacadeUserService;
-import com.wludio.blog.facade.dto.UserDto;
+import com.wludio.blog.facade.FacadeCategoryService;
+import com.wludio.blog.facade.dto.CategoryDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,38 +22,38 @@ import java.util.Optional;
 @Slf4j
 @Validated
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping("/api/v1/categories")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class UserController {
+public class CategoryController {
 
-    private final FacadeUserService facadeUserService;
+    private final FacadeCategoryService facadeCategoryService;
 
     @GetMapping(path = "/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<UserDto>> getUserDtos(@RequestParam(defaultValue = "0") final Integer pageNo,
-                                                     @RequestParam(defaultValue = "10") final Integer pageSize,
-                                                     @RequestParam(defaultValue = "id") final String sortBy) {
+    public ResponseEntity<List<CategoryDto>> getCategories(@RequestParam(defaultValue = "0") final Integer pageNo,
+                                                           @RequestParam(defaultValue = "10") final Integer pageSize,
+                                                           @RequestParam(defaultValue = "id") final String sortBy) {
 
-        log.info("Request to getUsers");
+        log.info("Request to getCategories");
         Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
 
-        List<UserDto> users = facadeUserService.findAll(pageable);
+        List<CategoryDto> categories = facadeCategoryService.findAll(pageable);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(users);
+                .body(categories);
     }
 
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserDto> getUserDtoById(@PathVariable @Min(1) final Long id) {
+    public ResponseEntity<CategoryDto> getCategoryById(@PathVariable @Min(1) final Long id) {
 
-        log.info("Request to getUserById : {}", id);
+        log.info("Request to getCategoryById : {}", id);
 
-        Optional<UserDto> user = facadeUserService.findById(id);
+        Optional<CategoryDto> category = facadeCategoryService.findById(id);
 
-        if (user.isPresent()) {
+        if (category.isPresent()) {
             return ResponseEntity
                     .status(HttpStatus.OK)
-                    .body(user.get());
+                    .body(category.get());
         }
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
@@ -61,29 +61,30 @@ public class UserController {
     }
 
     @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserDto> create(@Valid @RequestBody final UserDto user) {
-        log.info("Request to create user: {}", user);
+    public ResponseEntity<CategoryDto> create(@Valid @RequestBody final CategoryDto category) {
+        log.info("Request to create category: {}", category);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(facadeUserService.create(user));
+                .body(facadeCategoryService.create(category));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<Void> delete(@PathVariable @Min(1) final Long id) {
-        log.info("Request to delete user with the id : {}", id);
+        log.info("Request to delete category with the id : {}", id);
 
-        facadeUserService.delete(id);
+        facadeCategoryService.delete(id);
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
                 .build();
     }
 
     @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserDto> update(@PathVariable @Min(1) final Long id,
-                                          @Valid @RequestBody final UserDto user) {
-        log.info("Request to update user with the id: {} and info: {} ", id, user);
+    public ResponseEntity<CategoryDto> update(@PathVariable @Min(1) final Long id,
+                                              @Valid @RequestBody final CategoryDto category) {
+        log.info("Request to update category with the id: {} and info: {} ", id, category);
+
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(facadeUserService.update(id, user));
+                .body(facadeCategoryService.update(id, category));
     }
 }

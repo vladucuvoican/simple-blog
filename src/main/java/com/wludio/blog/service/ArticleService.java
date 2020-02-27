@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +37,7 @@ public class ArticleService {
         log.debug("Calling update for the article with the id: {} and info: {}", id, article);
         Preconditions.checkNotNull(article, "The article should not be null!");
         Preconditions.checkNotNull(id, "The articleId should not be null!");
+
         article.setId(id);
         return articleRepository.save(article);
     }
@@ -58,6 +60,10 @@ public class ArticleService {
         log.debug("Calling delete for the id: {}", id);
         Preconditions.checkNotNull(id, "The id should not be null!");
 
-        articleRepository.deleteById(id);
+        try {
+            articleRepository.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            log.warn("There's no article with the id: {}, that can be deleted!", id);
+        }
     }
 }

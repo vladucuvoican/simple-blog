@@ -38,6 +38,10 @@ public class Comment extends BaseEntity {
     @JoinColumn(name = "ARTICLE_ID", nullable = false)
     private Article article;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "USER_ID", nullable = false)
+    private User user;
+
     private Date publishedOn;
 
     @CreationTimestamp

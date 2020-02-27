@@ -21,6 +21,6 @@ public class Category extends BaseEntity {
     @OneToMany(mappedBy = "parent", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Category> children = new LinkedList<>();
 
-    private String title;
+    private String name;
     private String description;
 }

@@ -1,6 +1,7 @@
-package com.wludio.blog.service;
+package com.wludio.blog.security;
 
 import com.wludio.blog.entites.User;
+import com.wludio.blog.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

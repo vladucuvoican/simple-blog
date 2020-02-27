@@ -38,6 +38,12 @@ public class Article extends BaseEntity {
     @Column(nullable = false)
     private String content;
 
+    @ManyToMany(cascade = CascadeType.REFRESH)
+    @JoinTable(schema = Schema.BLOG,
+            joinColumns = @JoinColumn(name = "ARTICLE_ID", referencedColumnName = "ID"),
+            inverseJoinColumns = @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "ID"))
+    private List<Category> categories = new LinkedList<>();
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "article", cascade = CascadeType.ALL)
     private List<Comment> comments = new LinkedList<>();
 
