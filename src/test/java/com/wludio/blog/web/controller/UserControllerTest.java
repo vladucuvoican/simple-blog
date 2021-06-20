@@ -2,8 +2,8 @@ package com.wludio.blog.web.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wludio.blog.config.SwaggerConfig;
-import com.wludio.blog.facade.FacadeUserService;
-import com.wludio.blog.web.controller.exception.GlobalExceptionHandler;
+import com.wludio.blog.service.UserService;
+import com.wludio.blog.exception.GlobalExceptionHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -50,7 +50,7 @@ public class UserControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private FacadeUserService facadeUserService;
+    private UserService userService;
 
     private GlobalExceptionHandler exceptionHandler;
 

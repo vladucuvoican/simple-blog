@@ -1,69 +1,72 @@
 package com.wludio.blog.service;
 
+
 import com.google.common.base.Preconditions;
 import com.wludio.blog.entites.User;
+import com.wludio.blog.dtos.UserDto;
+import com.wludio.blog.mappers.UserMapper;
 import com.wludio.blog.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+
 @Slf4j
 @Service
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
-    public void updateLastLoginDateForUser(String username) {
-        log.debug("Calling updateLastLoginDateForUser with the username: {}", username);
-        Preconditions.checkArgument(StringUtils.isNotBlank(username), "The username should not be blank!");
+    public UserDto create(UserDto userDto) {
+        log.debug("Calling create for the user: {}", userDto);
+        Preconditions.checkNotNull(userDto, "The user should not be null!");
 
-        User user = userRepository.findByUsername(username);
-        user.setLastLogin(Date.from(Instant.now()));
-        userRepository.save(user);
+        User user = userMapper.toEntity(userDto);
+        user = userRepository.save(user);
+
+        return userMapper.toDto(user);
     }
 
-    public List<User> findAll(Pageable pageable) {
+    public Page<UserDto> findAll(Pageable pageable) {
         log.debug("Calling findAll");
+        Page<User> users = userRepository.findAll(pageable);
 
-        return userRepository.findAll(pageable).getContent();
+        List<UserDto> userDtos = userMapper.toDtos(users.getContent());
+        return new PageImpl<>(userDtos, pageable, users.getTotalElements());
     }
 
-    public Optional<User> findById(Long id) {
-        log.debug("Calling findById: {}", id);
+    public UserDto update(Long id, UserDto userDto) {
+        log.debug("Calling update for the user with the id: {} and info: {}", id, userDto);
+        Preconditions.checkNotNull(userDto, "The user should not be null!");
         Preconditions.checkNotNull(id, "The userId should not be null!");
 
-        return userRepository.findById(id);
-    }
-
-    public User create(User user) {
-        log.debug("Calling create for the user: {}" , user);
-        Preconditions.checkNotNull(user, "The user should not be null!");
-
-        return userRepository.save(user);
-    }
-
-    public User update(Long id, User user) {
-        log.debug("Calling update for the user with the id: {} and info: {}", id, user);
-        Preconditions.checkNotNull(user, "The user should not be null!");
-        Preconditions.checkNotNull(id, "The userId should not be null!");
-
+        User user = userMapper.toEntity(userDto);
         user.setId(id);
-        return userRepository.save(user);
+        user = userRepository.save(user);
+
+        return userMapper.toDto(user);
+    }
+
+    public Optional<UserDto> findById(Long id) {
+        log.debug("Calling findById: {}", id);
+        Preconditions.checkNotNull(id, "The id should not be null!");
+
+        User user = userRepository.findByIdRequired(id);
+        return Optional.of(userMapper.toDto(user));
     }
 
     public void delete(Long id) {
-        log.debug("Calling delete user with the id: {}", id);
-        Preconditions.checkNotNull(id, "The userId should not be null!");
+        log.debug("Calling delete for the id: {}", id);
+        Preconditions.checkNotNull(id, "The id should not be null!");
 
         try {
             userRepository.deleteById(id);

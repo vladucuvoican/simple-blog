@@ -1,4 +1,4 @@
-package com.wludio.blog.facade.dto;
+package com.wludio.blog.dtos;
 
 import lombok.Data;
 
@@ -6,7 +6,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
 @Data

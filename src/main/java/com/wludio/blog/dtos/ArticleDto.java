@@ -1,4 +1,4 @@
-package com.wludio.blog.facade.dto;
+package com.wludio.blog.dtos;
 
 import com.wludio.blog.entites.enums.ArticleStatus;
 import lombok.Data;

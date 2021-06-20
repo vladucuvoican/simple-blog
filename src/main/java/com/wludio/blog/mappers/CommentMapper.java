@@ -1,7 +1,7 @@
-package com.wludio.blog.facade.mapper;
+package com.wludio.blog.mappers;
 
 import com.wludio.blog.entites.Comment;
-import com.wludio.blog.facade.dto.CommentDto;
+import com.wludio.blog.dtos.CommentDto;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 

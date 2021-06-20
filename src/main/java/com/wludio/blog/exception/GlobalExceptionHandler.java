@@ -1,6 +1,6 @@
-package com.wludio.blog.web.controller.exception;
+package com.wludio.blog.exception;
 
-import com.wludio.blog.facade.dto.ApiError;
+import com.wludio.blog.dtos.ApiError;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

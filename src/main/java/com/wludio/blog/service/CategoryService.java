@@ -1,58 +1,67 @@
 package com.wludio.blog.service;
 
+
 import com.google.common.base.Preconditions;
 import com.wludio.blog.entites.Category;
+import com.wludio.blog.dtos.CategoryDto;
+import com.wludio.blog.mappers.CategoryMapper;
 import com.wludio.blog.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+
 @Slf4j
 @Service
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
+    private final CategoryMapper categoryMapper;
 
-    public Category create(Category category) {
-        log.debug("Calling create for the category: {}" , category);
-        Preconditions.checkNotNull(category, "The category should not be null!");
+    public CategoryDto create(CategoryDto categoryDto) {
+        log.debug("Calling create for the category: {}", categoryDto);
+        Preconditions.checkNotNull(categoryDto, "The category should not be null!");
 
-        return categoryRepository.save(category);
+        Category category = categoryMapper.toEntity(categoryDto);
+        category = categoryRepository.save(category);
+
+        return categoryMapper.toDto(category);
     }
 
-    public List<Category> findAll(Pageable pageable) {
+    public Page<CategoryDto> findAll(Pageable pageable) {
         log.debug("Calling findAll");
-        return categoryRepository.findAll(pageable).getContent();
+        Page<Category> categories = categoryRepository.findAll(pageable);
+
+        List<CategoryDto> categoryDtos = categoryMapper.toDtos(categories.getContent());
+        return new PageImpl<>(categoryDtos, pageable, categories.getTotalElements());
     }
 
-    public Category update(Long id, Category category) {
-        log.debug("Calling update for the category with the id: {} and info: {}", id, category);
-        Preconditions.checkNotNull(category, "The category should not be null!");
+    public CategoryDto update(Long id, CategoryDto categoryDto) {
+        log.debug("Calling update for the category with the id: {} and info: {}", id, categoryDto);
+        Preconditions.checkNotNull(categoryDto, "The category should not be null!");
         Preconditions.checkNotNull(id, "The categoryId should not be null!");
+
+        Category category = categoryMapper.toEntity(categoryDto);
         category.setId(id);
-        return categoryRepository.save(category);
+        category = categoryRepository.save(category);
+
+        return categoryMapper.toDto(category);
     }
 
-    public Optional<Category> findById(Long id) {
+    public Optional<CategoryDto> findById(Long id) {
         log.debug("Calling findById: {}", id);
         Preconditions.checkNotNull(id, "The id should not be null!");
 
-        return categoryRepository.findById(id);
-    }
-
-    public Optional<Category> findByName(String name) {
-        log.debug("Calling findByName: {}", name);
-        Preconditions.checkArgument(StringUtils.isNotBlank(name), "The name should not be blank!");
-
-        return categoryRepository.findByName(name);
+        Category category = categoryRepository.findById(id).get();
+        return Optional.ofNullable(categoryMapper.toDto(category));
     }
 
     public void delete(Long id) {
